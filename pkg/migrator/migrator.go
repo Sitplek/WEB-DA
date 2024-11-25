@@ -21,9 +21,9 @@ type Migrator struct {
 // NewMigrator создаёт новый экземпляр мигратора
 func NewMigrator(db *sql.DB, serviceID, path string) *Migrator {
     return &Migrator{
-        db: db,
+        db:        db,
         serviceID: serviceID,
-        path: path,
+        path:      path,
     }
 }
 
@@ -31,26 +31,25 @@ func NewMigrator(db *sql.DB, serviceID, path string) *Migrator {
 func (m *Migrator) InitSchema() error {
     _, err := m.db.Exec(`
         CREATE TABLE IF NOT EXISTS migrations_lock (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             locked BOOLEAN DEFAULT FALSE,
-            locked_at TIMESTAMP NULL DEFAULT NULL,
-            locked_by VARCHAR(255) DEFAULT NULL
+            locked_at TIMESTAMPTZ DEFAULT NULL,
+            locked_by TEXT DEFAULT NULL
         );
     `)
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
     _, err = m.db.Exec(`
-    CREATE TABLE IF NOT EXISTS migrations (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        version VARCHAR(255) NOT NULL,
-        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE KEY (version)
-    );
-`)
+        CREATE TABLE IF NOT EXISTS migrations (
+            id SERIAL PRIMARY KEY,
+            version TEXT NOT NULL,
+            applied_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE (version)
+        );
+    `)
     return err
 }
-
 
 // getPendingMigrations находит файлы миграций, которые ещё не применены
 func (m *Migrator) getPendingMigrations() ([]string, error) {
@@ -82,7 +81,7 @@ func (m *Migrator) applyFileMigration(filename string) error {
         return err
     }
 
-    _, err = m.db.Exec(`INSERT INTO migrations (version) VALUES (?)`, filename)
+    _, err = m.db.Exec(`INSERT INTO migrations (version) VALUES ($1)`, filename)
     return err
 }
 
@@ -99,7 +98,7 @@ func (m *Migrator) Lock() error {
     if err != nil {
         // Если записи нет, создаём новую
         if errors.Is(err, sql.ErrNoRows) {
-            _, err = tx.Exec(`INSERT INTO migrations_lock (id, locked, locked_at, locked_by) VALUES (1, TRUE, ?, ?)`,
+            _, err = tx.Exec(`INSERT INTO migrations_lock (id, locked, locked_at, locked_by) VALUES (1, TRUE, $1, $2)`,
                 time.Now(), m.serviceID)
             if err != nil {
                 return err
@@ -114,7 +113,7 @@ func (m *Migrator) Lock() error {
     }
 
     // Устанавливаем блокировку
-    _, err = tx.Exec(`UPDATE migrations_lock SET locked=TRUE, locked_at=?, locked_by=? WHERE id=1`,
+    _, err = tx.Exec(`UPDATE migrations_lock SET locked=TRUE, locked_at=$1, locked_by=$2 WHERE id=1`,
         time.Now(), m.serviceID)
     if err != nil {
         return err
@@ -128,8 +127,6 @@ func (m *Migrator) Unlock() error {
     _, err := m.db.Exec(`UPDATE migrations_lock SET locked=FALSE, locked_at=NULL, locked_by=NULL WHERE id=1`)
     return err
 }
-
-
 
 // ApplyMigrations выполняет миграции, которых нет в базе
 func (m *Migrator) ApplyMigrations() error {
@@ -158,7 +155,7 @@ func (m *Migrator) ApplyMigrations() error {
 // isMigrationApplied проверяет, была ли миграция выполнена ранее
 func (m *Migrator) isMigrationApplied(version string) bool {
     var exists bool
-    err := m.db.QueryRow(`SELECT EXISTS(SELECT 1 FROM migrations WHERE version = ?)`, version).Scan(&exists)
+    err := m.db.QueryRow(`SELECT EXISTS(SELECT 1 FROM migrations WHERE version = $1)`, version).Scan(&exists)
     if err != nil {
         log.Printf("Failed to check migration version: %v", err)
     }
