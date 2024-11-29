@@ -5,38 +5,50 @@ import (
     "WEB-DA/internal/storage"
 )
 
-type Service interface {
-    GetOrganizationTree() ([]models.Department, error)
-    SearchEmployees(position, skill string, departmentID *int) ([]models.Employee, error)
-    GetEmployeeDetails(employeeID int) (*models.Employee, error)
-    UpdateEmployee(employee models.Employee) error
-    AddDepartment(department models.Department) error
+type OrganizationService struct {
+    storage *storage.OrganizationStorage
 }
 
-type serviceImpl struct {
-    storage storage.Storage
+func NewOrganizationService(storage *storage.OrganizationStorage) *OrganizationService {
+    return &OrganizationService{storage: storage}
 }
 
-func NewService(storage storage.Storage) Service {
-    return &serviceImpl{storage: storage}
+// Получение дерева организации
+func (s *OrganizationService) GetOrganizationTree() ([]models.Department, error) {
+    departments, err := s.storage.GetAllDepartments()
+    if err != nil {
+        return nil, err
+    }
+
+    var buildTree func([]models.Department, *uint) []models.Department
+    buildTree = func(depts []models.Department, parentID *uint) []models.Department {
+        var nodes []models.Department
+        for _, d := range depts {
+            if (parentID == nil && d.ParentID == nil) || (parentID != nil && d.ParentID != nil && *parentID == *d.ParentID) {
+                // Для каждого департамента, добавляем его сотрудников
+                d.Employees = s.getEmployeesForDepartment(d.ID, departments)
+                d.SubDepartments = buildTree(depts, &d.ID)
+                nodes = append(nodes, d)
+            }
+        }
+        return nodes
+    }
+
+    return buildTree(departments, nil), nil
 }
 
-func (s *serviceImpl) GetOrganizationTree() ([]models.Department, error) {
-    return s.storage.GetOrganizationTree()
+func (s *OrganizationService) getEmployeesForDepartment(departmentID uint, allDepartments []models.Department) []models.Employee {
+    var employees []models.Employee
+    for _, dept := range allDepartments {
+        for _, emp := range dept.Employees {
+            if emp.DepartmentID == departmentID {
+                employees = append(employees, emp)
+            }
+        }
+    }
+    return employees
 }
-
-func (s *serviceImpl) SearchEmployees(position, skill string, departmentID *int) ([]models.Employee, error) {
-    return s.storage.SearchEmployees(position, skill, departmentID)
-}
-
-func (s *serviceImpl) GetEmployeeDetails(employeeID int) (*models.Employee, error) {
-    return s.storage.GetEmployeeDetails(employeeID)
-}
-
-func (s *serviceImpl) UpdateEmployee(employee models.Employee) error {
-    return s.storage.UpdateEmployee(employee)
-}
-
-func (s *serviceImpl) AddDepartment(department models.Department) error {
-    return s.storage.AddDepartment(department)
+// Получение отфильтрованных сотрудников
+func (s *OrganizationService) GetFilteredEmployees(filters map[string]interface{}) ([]models.Employee, error) {
+    return s.storage.GetFilteredEmployees(filters)
 }
