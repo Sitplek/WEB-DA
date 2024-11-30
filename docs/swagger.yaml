@@ -1,0 +1,92 @@
+basePath: /
+definitions:
+  handler.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.Employee:
+    properties:
+      department_id:
+        type: integer
+      division_id:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        description: db:"id" указывает на столбец id в базе данных
+        type: integer
+      last_name:
+        type: string
+      manager_id:
+        type: integer
+      phone:
+        type: string
+      position:
+        type: string
+      role:
+        type: string
+      unit_id:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+    url: http://example.com/contact
+  description: API для управления сотрудниками и их иерархией.
+  termsOfService: http://example.com/terms/
+  title: Employee Management API
+  version: "1.0"
+paths:
+  /employees:
+    get:
+      description: Возвращает список всех сотрудников
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Employee'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Получение всех сотрудников
+      tags:
+      - Employees
+  /employees/hierarchy:
+    get:
+      description: Возвращает иерархию сотрудников по manager_id или department_id
+      parameters:
+      - description: ID руководителя
+        in: query
+        name: manager_id
+        type: integer
+      - description: ID отдела
+        in: query
+        name: department_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Employee'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Получение иерархии сотрудников
+      tags:
+      - Employees
+swagger: "2.0"

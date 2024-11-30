@@ -1,58 +1,77 @@
-	package handler
+package handler
 
-	import (
-		"github.com/gin-gonic/gin"
-		"WEB-DA/internal/service"
-		"net/http"
-	)
+import (
+	"net/http"
 
-	type Handler struct {
-		service *service.Service
-	}
+	"github.com/gin-gonic/gin"
+	"WEB-DA/internal/service"
+)
 
-	func NewHandler(service *service.Service) *Handler {
-		return &Handler{service: service}
-	}
-
-// Получение иерархии сотрудников
-func (h *Handler) GetEmployeeHierarchy(c *gin.Context) {
-    managerID := c.DefaultQuery("manager_id", "")  // получаем параметр, если он не передан - ставим пустую строку
-    departmentID := c.DefaultQuery("department_id", "")
-
-    // Если manager_id не пустой, парсим его в int
-    var managerIDInt interface{}
-    if managerID != "" {
-        managerIDInt = managerID  // передаем строку, если она есть
-    } else {
-        managerIDInt = nil  // если пусто, передаем nil
-    }
-
-    // Если department_id не пустой, парсим его в int
-    var departmentIDInt interface{}
-    if departmentID != "" {
-        departmentIDInt = departmentID  // передаем строку, если она есть
-    } else {
-        departmentIDInt = nil  // если пусто, передаем nil
-    }
-
-    // Вызов метода сервиса
-    employees, err := h.service.GetEmployeeHierarchy(managerIDInt, departmentIDInt)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
-
-    c.JSON(http.StatusOK, employees)
+type ErrorResponse struct {
+	Error string `json:"error"`
 }
 
+// Handler — структура обработчика запросов.
+type Handler struct {
+	service *service.Service
+}
 
-	// Получение списка всех сотрудников
-	func (h *Handler) GetAllEmployees(c *gin.Context) {
-		employees, err := h.service.GetAllEmployees()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+// NewHandler создает новый экземпляр обработчика.
+func NewHandler(service *service.Service) *Handler {
+	return &Handler{service: service}
+}
 
-		c.JSON(http.StatusOK, employees)
+// GetEmployeeHierarchy godoc
+// @Summary Получение иерархии сотрудников
+// @Description Возвращает иерархию сотрудников по manager_id или department_id
+// @Tags Employees
+// @Produce json
+// @Param manager_id query int false "ID руководителя"
+// @Param department_id query int false "ID отдела"
+// @Success 200 {array} models.Employee
+// @Failure 500 {object} ErrorResponse
+// @Router /employees/hierarchy [get]
+func (h *Handler) GetEmployeeHierarchy(c *gin.Context) {
+	// Получение параметров запроса
+	managerID := c.DefaultQuery("manager_id", "")
+	departmentID := c.DefaultQuery("department_id", "")
+
+	// Преобразование параметров в интерфейсы
+	var managerIDInt, departmentIDInt interface{}
+	if managerID != "" {
+		managerIDInt = managerID
 	}
+	if departmentID != "" {
+		departmentIDInt = departmentID
+	}
+
+	// Вызов метода сервиса
+	employees, err := h.service.GetEmployeeHierarchy(managerIDInt, departmentIDInt)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Ответ
+	c.JSON(http.StatusOK, employees)
+}
+
+// GetAllEmployees godoc
+// @Summary Получение всех сотрудников
+// @Description Возвращает список всех сотрудников
+// @Tags Employees
+// @Produce json
+// @Success 200 {array} models.Employee
+// @Failure 500 {object} ErrorResponse
+// @Router /employees [get]
+func (h *Handler) GetAllEmployees(c *gin.Context) {
+	// Вызов метода сервиса
+	employees, err := h.service.GetAllEmployees()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Ответ
+	c.JSON(http.StatusOK, employees)
+}

@@ -30,5 +30,17 @@ services:
     ports:
       - "8080:8080"
 
+  swagger_ui:
+    image: swaggerapi/swagger-ui
+    container_name: swagger_ui
+    environment:
+      - SWAGGER_JSON=/swagger/swagger.json
+    volumes:
+      - ./docs:/swagger
+    ports:
+      - "8081:8080"
+    depends_on:
+      - api_service
+
 volumes:
   pgdata:
