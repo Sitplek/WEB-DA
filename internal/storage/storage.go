@@ -17,7 +17,7 @@ func NewStorage(db *sqlx.DB) *Storage {
 func (s *Storage) GetEmployeeHierarchy(managerID interface{}, departmentID interface{}) ([]models.Employee, error) {
     query := `
         WITH RECURSIVE employee_hierarchy AS (
-            SELECT 
+            SELECT DISTINCT 
                 e.id, e.first_name, e.last_name, e.position, e.role, e.phone, e.email,
                 e.manager_id, e.department_id, e.division_id, e.unit_id
             FROM employees e
@@ -26,13 +26,15 @@ func (s *Storage) GetEmployeeHierarchy(managerID interface{}, departmentID inter
 
             UNION ALL
 
-            SELECT 
+            SELECT DISTINCT 
                 e.id, e.first_name, e.last_name, e.position, e.role, e.phone, e.email,
                 e.manager_id, e.department_id, e.division_id, e.unit_id
             FROM employees e
             INNER JOIN employee_hierarchy eh ON e.manager_id = eh.id
         )
-        SELECT * FROM employee_hierarchy;
+        SELECT DISTINCT * 
+        FROM employee_hierarchy
+        ORDER BY manager_id NULLS FIRST, id;
     `
 
     var employees []models.Employee
