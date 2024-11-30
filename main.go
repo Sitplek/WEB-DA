@@ -27,7 +27,7 @@ func main() {
 		log.Fatal("Missing required environment variables: DATABASE_URL, SERVICE_ID, or PORT")
 	}
 
-
+	log.Println(dbURL)
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
