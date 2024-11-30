@@ -16,7 +16,7 @@
     "paths": {
         "/employees": {
             "get": {
-                "description": "Возвращает список всех сотрудников",
+                "description": "Возвращает список всех сотрудников с возможностью фильтрации",
                 "produces": [
                     "application/json"
                 ],
@@ -24,6 +24,68 @@
                     "Employees"
                 ],
                 "summary": "Получение всех сотрудников",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Имя",
+                        "name": "first_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фамилия",
+                        "name": "last_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Должность",
+                        "name": "position",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Роль",
+                        "name": "role",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Телефон",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Почта",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID руководителя",
+                        "name": "manager_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID департамента",
+                        "name": "department_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID подразделения",
+                        "name": "division_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID отдела",
+                        "name": "unit_id",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

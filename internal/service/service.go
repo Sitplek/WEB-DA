@@ -24,3 +24,8 @@ func (s *Service) GetEmployeeHierarchy(managerID, departmentID interface{}) ([]m
 func (s *Service) GetAllEmployees() ([]models.Employee, error) {
 	return s.storage.GetAllEmployees()
 }
+
+// GetAllEmployeesWithFilters возвращает список сотрудников с фильтрами
+func (s *Service) GetAllEmployeesWithFilters(filters map[string]interface{}) ([]models.Employee, error) {
+	return s.storage.GetEmployeesWithFilters(filters)
+}

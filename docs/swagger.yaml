@@ -44,7 +44,48 @@ info:
 paths:
   /employees:
     get:
-      description: Возвращает список всех сотрудников
+      description: Возвращает список всех сотрудников с возможностью фильтрации
+      parameters:
+      - description: Имя
+        in: query
+        name: first_name
+        type: string
+      - description: Фамилия
+        in: query
+        name: last_name
+        type: string
+      - description: Должность
+        in: query
+        name: position
+        type: string
+      - description: Роль
+        in: query
+        name: role
+        type: string
+      - description: Телефон
+        in: query
+        name: phone
+        type: string
+      - description: Почта
+        in: query
+        name: email
+        type: string
+      - description: ID руководителя
+        in: query
+        name: manager_id
+        type: integer
+      - description: ID департамента
+        in: query
+        name: department_id
+        type: integer
+      - description: ID подразделения
+        in: query
+        name: division_id
+        type: integer
+      - description: ID отдела
+        in: query
+        name: unit_id
+        type: integer
       produces:
       - application/json
       responses:

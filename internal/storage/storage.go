@@ -2,6 +2,9 @@ package storage
 
 import (
 	"WEB-DA/internal/models"
+	"strconv"
+	"strings"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -15,7 +18,7 @@ func NewStorage(db *sqlx.DB) *Storage {
 
 // Получить иерархию сотрудников с использованием рекурсии
 func (s *Storage) GetEmployeeHierarchy(managerID interface{}, departmentID interface{}) ([]models.Employee, error) {
-    query := `
+	query := `
         WITH RECURSIVE employee_hierarchy AS (
             SELECT DISTINCT 
                 e.id, e.first_name, e.last_name, e.position, e.role, e.phone, e.email,
@@ -37,14 +40,45 @@ func (s *Storage) GetEmployeeHierarchy(managerID interface{}, departmentID inter
         ORDER BY manager_id NULLS FIRST, id;
     `
 
-    var employees []models.Employee
-    err := s.db.Select(&employees, query, managerID, departmentID)
-    return employees, err
+	var employees []models.Employee
+	err := s.db.Select(&employees, query, managerID, departmentID)
+	return employees, err
 }
 
-// Получить всех сотрудников
+// Получить всех сотрудников с фильтрами
+// GetEmployeesWithFilters возвращает список сотрудников с учётом фильтров
+func (s *Storage) GetEmployeesWithFilters(filters map[string]interface{}) ([]models.Employee, error) {
+	query := "SELECT * FROM employees"
+	var conditions []string
+	var args []interface{}
+
+	// Формируем условия из фильтров
+	for key, value := range filters {
+		if value != "" && value != nil {
+			// Используем порядковый номер аргумента для плейсхолдера
+			conditions = append(conditions, key+" = $"+strconv.Itoa(len(args)+1))
+			args = append(args, value)
+		}
+	}
+
+	// Добавляем WHERE, если есть условия
+	if len(conditions) > 0 {
+		query += " WHERE " + strings.Join(conditions, " AND ")
+	}
+
+	// Выполняем запрос
+	var employees []models.Employee
+	err := s.db.Select(&employees, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return employees, nil
+}
+
+// Получить всех сотрудников (без фильтров)
 func (s *Storage) GetAllEmployees() ([]models.Employee, error) {
-	query := `SELECT * FROM employees`
+	query := `SELECT * FROM employees ORDER BY id`
 	var employees []models.Employee
 	err := s.db.Select(&employees, query)
 	return employees, err

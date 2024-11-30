@@ -58,20 +58,43 @@ func (h *Handler) GetEmployeeHierarchy(c *gin.Context) {
 
 // GetAllEmployees godoc
 // @Summary Получение всех сотрудников
-// @Description Возвращает список всех сотрудников
+// @Description Возвращает список всех сотрудников с возможностью фильтрации
 // @Tags Employees
 // @Produce json
+// @Param first_name query string false "Имя"
+// @Param last_name query string false "Фамилия"
+// @Param position query string false "Должность"
+// @Param role query string false "Роль"
+// @Param phone query string false "Телефон"
+// @Param email query string false "Почта"
+// @Param manager_id query int false "ID руководителя"
+// @Param department_id query int false "ID департамента"
+// @Param division_id query int false "ID подразделения"
+// @Param unit_id query int false "ID отдела"
 // @Success 200 {array} models.Employee
 // @Failure 500 {object} ErrorResponse
 // @Router /employees [get]
 func (h *Handler) GetAllEmployees(c *gin.Context) {
-	// Вызов метода сервиса
-	employees, err := h.service.GetAllEmployees()
+	// Собираем фильтры из параметров запроса
+	filters := map[string]interface{}{
+		"first_name":   c.Query("first_name"),
+		"last_name":    c.Query("last_name"),
+		"position":     c.Query("position"),
+		"role":         c.Query("role"),
+		"phone":        c.Query("phone"),
+		"email":        c.Query("email"),
+		"manager_id":   c.Query("manager_id"),
+		"department_id": c.Query("department_id"),
+		"division_id":  c.Query("division_id"),
+		"unit_id":      c.Query("unit_id"),
+	}
+
+	// Вызов слоя сервиса с фильтрами
+	employees, err := h.service.GetAllEmployeesWithFilters(filters)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	// Ответ
 	c.JSON(http.StatusOK, employees)
 }
