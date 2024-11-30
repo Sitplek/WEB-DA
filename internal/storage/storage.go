@@ -153,3 +153,20 @@ func (s *Storage) generateFilterKey(filters map[string]interface{}) string {
 func (s *Storage) generateHierarchyKey(managerID interface{}, departmentID interface{}) string {
 	return fmt.Sprintf("manager_id=%v&department_id=%v", managerID, departmentID)
 }
+
+// GetFilters возвращает список доступных фильтров
+func (s *Storage) GetFilters() ([]models.Filters, error) {
+    filters := []models.Filters{
+        {Key: "first_name", Name: "Имя сотрудника"},
+        {Key: "last_name", Name: "Фамилия сотрудника"},
+        {Key: "position", Name: "Должность сотрудника"},
+        {Key: "role", Name: "Роль сотрудника"},
+        {Key: "phone", Name: "Номер телефона"},
+        {Key: "email", Name: "Электронная почта"},
+        {Key: "manager_id", Name: "ID руководителя"},
+        {Key: "department_id", Name: "ID департамента"},
+        {Key: "division_id", Name: "ID подразделения"},
+        {Key: "unit_id", Name: "ID отдела"},
+    }
+    return filters, nil
+}

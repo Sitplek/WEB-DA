@@ -98,3 +98,20 @@ func (h *Handler) GetAllEmployees(c *gin.Context) {
 
 	c.JSON(http.StatusOK, employees)
 }
+
+// GetFilters godoc
+// @Summary Получение списка доступных фильтров
+// @Description Возвращает список фильтров для сотрудников
+// @Tags Employees
+// @Produce json
+// @Success 200 {array} models.Filters
+// @Failure 500 {object} ErrorResponse
+// @Router /filters [get]
+func (h *Handler) GetFilters(c *gin.Context) {
+    filters, err := h.service.GetFilters()
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+        return
+    }
+    c.JSON(http.StatusOK, filters)
+}

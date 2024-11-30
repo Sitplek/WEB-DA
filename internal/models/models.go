@@ -31,3 +31,8 @@ type Unit struct {
 	Name   string  `json:"name"`
 	HeadID *int    `json:"head_id"`
 }
+
+type Filters struct {
+	Key  string `json:"key"`
+	Name string `json:"name"`
+}

@@ -153,6 +153,35 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/filters": {
+            "get": {
+                "description": "Возвращает список фильтров для сотрудников",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Получение списка доступных фильтров",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Filters"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -200,6 +229,17 @@ const docTemplate = `{
                 },
                 "unit_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.Filters": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         }

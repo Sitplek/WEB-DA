@@ -88,6 +88,8 @@ func main() {
 	r.GET("/employees", handler.GetAllEmployees)
 	r.GET("/employees/hierarchy", handler.GetEmployeeHierarchy)
 
+	r.GET("/filters", handler.GetFilters)
+
 	// Запуск сервера
 	log.Println("Starting server on :8080")
 	if err := r.Run(":8080"); err != nil {

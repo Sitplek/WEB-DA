@@ -29,3 +29,8 @@ func (s *Service) GetAllEmployees() ([]models.Employee, error) {
 func (s *Service) GetAllEmployeesWithFilters(filters map[string]interface{}) ([]models.Employee, error) {
 	return s.storage.GetEmployeesWithFilters(filters)
 }
+
+// GetFilters возвращает список доступных фильтров
+func (s *Service) GetFilters() ([]models.Filters, error) {
+    return s.storage.GetFilters()
+}
