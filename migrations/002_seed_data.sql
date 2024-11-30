@@ -1,22 +1,28 @@
 -- Добавление данных в таблицы
 
 -- Добавляем департаменты
-INSERT INTO departments (id, name) VALUES 
-(1, 'Human Resources'), 
-(2, 'Finance'), 
-(3, 'Engineering');
+INSERT INTO departments (id, name)
+VALUES 
+    (1, 'Human Resources'), 
+    (2, 'Finance'), 
+    (3, 'Engineering')
+ON CONFLICT (id) DO NOTHING;
 
 -- Добавляем подразделения
-INSERT INTO divisions (id, name, department_id) VALUES
-(1, 'Recruitment', 1),
-(2, 'Payroll', 2),
-(3, 'Software Development', 3);
+INSERT INTO divisions (id, name, department_id)
+VALUES
+    (1, 'Recruitment', 1),
+    (2, 'Payroll', 2),
+    (3, 'Software Development', 3)
+ON CONFLICT (id) DO NOTHING;
 
 -- Добавляем отделы
-INSERT INTO units (id, name, division_id) VALUES
-(1, 'Candidate Screening', 1),
-(2, 'Salary Processing', 2),
-(3, 'Backend Development', 3);
+INSERT INTO units (id, name, division_id)
+VALUES
+    (1, 'Candidate Screening', 1),
+    (2, 'Salary Processing', 2),
+    (3, 'Backend Development', 3)
+ON CONFLICT (id) DO NOTHING;
 
 -- Добавляем сотрудников
 INSERT INTO employees (id, first_name, last_name, position, role, phone, email, manager_id, department_id, division_id, unit_id)
@@ -34,4 +40,5 @@ VALUES
     -- Сотрудники
     (8, 'Oleg', 'Novikov', 'Recruiter', 'Employee', '111111111', 'oleg@example.com', 5, 1, 1, 1),
     (9, 'Irina', 'Zhukova', 'Payroll Specialist', 'Employee', '222222222', 'irina@example.com', 6, 2, 2, 2),
-    (10, 'Maxim', 'Karpov', 'Backend Developer', 'Employee', '888888888', 'maxim@example.com', 7, 3, 3, 3);
+    (10, 'Maxim', 'Karpov', 'Backend Developer', 'Employee', '888888888', 'maxim@example.com', 7, 3, 3, 3)
+ON CONFLICT (id) DO NOTHING;
