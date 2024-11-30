@@ -1,46 +1,37 @@
--- Добавление офисов
-INSERT INTO offices (name, block) VALUES
-    ('Центральный офис', 'Корпоративный блок'),
-    ('Филиал в Оренбургской области', 'Розничный блок'),
-    ('Филиал в Волгоградской области', 'Розничный блок');
+-- Добавление данных в таблицы
 
--- Добавление подразделений для Центрального офиса
-INSERT INTO departments (name, office_id, parent_id) VALUES
-    ('Онлайн-банкинг для бизнеса', 1, NULL),
-    ('Транзакционные продукты', 1, NULL),
-    ('Управление по работе с филиалами', 1, NULL),
-    ('Онлайн-банкинг', 1, NULL);
+-- Добавляем департаменты
+INSERT INTO departments (id, name) VALUES 
+(1, 'Human Resources'), 
+(2, 'Finance'), 
+(3, 'Engineering');
 
--- Добавление подразделений для Филиала в Оренбургской области
-INSERT INTO departments (name, office_id, parent_id) VALUES
-    ('Управление по работе с клиентами крупного и среднего бизнеса', 2, NULL),
-    ('Управление по работе с клиентами малого бизнеса', 2, NULL),
-    ('Управление ипотечного кредитования', 2, NULL),
-    ('Управление инвестиционных продуктов', 2, NULL);
+-- Добавляем подразделения
+INSERT INTO divisions (id, name, department_id) VALUES
+(1, 'Recruitment', 1),
+(2, 'Payroll', 2),
+(3, 'Software Development', 3);
 
--- Добавление подразделений для Филиала в Волгоградской области
-INSERT INTO departments (name, office_id, parent_id) VALUES
-    ('Управление по работе с клиентами крупного и среднего бизнеса', 3, NULL),
-    ('Управление по работе с клиентами малого бизнеса', 3, NULL),
-    ('Управление ипотечного кредитования', 3, NULL),
-    ('Управление инвестиционных продуктов', 3, NULL);
+-- Добавляем отделы
+INSERT INTO units (id, name, division_id) VALUES
+(1, 'Candidate Screening', 1),
+(2, 'Salary Processing', 2),
+(3, 'Backend Development', 3);
 
--- Добавление сотрудников
--- Генеральный директор
-INSERT INTO employees (name, email, phone, address, role, job_position, supervisor_id) 
+-- Добавляем сотрудников
+INSERT INTO employees (id, first_name, last_name, position, role, phone, email, manager_id, department_id, division_id, unit_id)
 VALUES
-    ('Иванов Иван Иванович', 'director@bank.ru', '+79990000001', 'Москва, ул. Примерная, д. 1', 'руководитель', 'Генеральный директор', NULL);
-
--- Руководители офисов
-INSERT INTO employees (name, email, phone, address, role, job_position, department_id, manager_id, supervisor_id) 
-VALUES
-    ('Сидоров Петр Петрович', 'head_moscow@bank.ru', '+79990000002', 'Москва, ул. Примерная, д. 2', 'руководитель', 'Руководитель офиса', 1, 1, 1),
-    ('Кузнецов Сергей Сергеевич', 'head_orenburg@bank.ru', '+79990000003', 'Оренбург, ул. Примерная, д. 3', 'руководитель', 'Руководитель офиса', 2, 1, 1),
-    ('Новиков Андрей Андреевич', 'head_volgograd@bank.ru', '+79990000004', 'Волгоград, ул. Примерная, д. 4', 'руководитель', 'Руководитель офиса', 3, 1, 1);
-
--- Сотрудники подразделений
-INSERT INTO employees (name, email, phone, address, role, job_position, department_id, manager_id, supervisor_id) 
-VALUES
-    ('Алексеев Алексей Алексеевич', 'employee1@bank.ru', '+79990000005', 'Москва, ул. Примерная, д. 5', 'сотрудник', 'Специалист', 1, 2, 1),
-    ('Васильев Василий Васильевич', 'employee2@bank.ru', '+79990000006', 'Оренбург, ул. Примерная, д. 6', 'сотрудник', 'Менеджер', 5, 3, 1),
-    ('Петров Петр Петрович', 'employee3@bank.ru', '+79990000007', 'Волгоград, ул. Примерная, д. 7', 'сотрудник', 'Аналитик', 9, 4, 1);
+    -- Генеральный директор
+    (1, 'Dmitry', 'Ivanov', 'CEO', 'General Director', '123456789', 'ceo@example.com', NULL, NULL, NULL, NULL),
+    -- Руководители департаментов
+    (2, 'Maria', 'Petrova', 'HR Director', 'Head of HR', '987654321', 'hr@example.com', 1, 1, NULL, NULL),
+    (3, 'Alexey', 'Sidorov', 'Finance Director', 'Head of Finance', '555555555', 'finance@example.com', 1, 2, NULL, NULL),
+    (4, 'Ivan', 'Kuznetsov', 'Engineering Director', 'Head of Engineering', '999999999', 'engineering@example.com', 1, 3, NULL, NULL),
+    -- Руководители подразделений
+    (5, 'Anna', 'Smirnova', 'Recruitment Manager', 'Head of Recruitment', '333333333', 'recruitment@example.com', 2, 1, 1, NULL),
+    (6, 'Sergey', 'Vasilyev', 'Payroll Manager', 'Head of Payroll', '444444444', 'payroll@example.com', 3, 2, 2, NULL),
+    (7, 'Elena', 'Fedorova', 'Software Manager', 'Head of Software', '555666777', 'software@example.com', 4, 3, 3, NULL),
+    -- Сотрудники
+    (8, 'Oleg', 'Novikov', 'Recruiter', 'Employee', '111111111', 'oleg@example.com', 5, 1, 1, 1),
+    (9, 'Irina', 'Zhukova', 'Payroll Specialist', 'Employee', '222222222', 'irina@example.com', 6, 2, 2, 2),
+    (10, 'Maxim', 'Karpov', 'Backend Developer', 'Employee', '888888888', 'maxim@example.com', 7, 3, 3, 3);

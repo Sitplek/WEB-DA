@@ -1,30 +1,33 @@
 package models
 
-import "time"
-
-type Department struct {
-	ID             uint         `gorm:"primaryKey" json:"ID"`
-	Name           string       `json:"Name"`
-	ParentID       *uint        `json:"ParentID"`
-	Parent         *Department  `gorm:"foreignKey:ParentID" json:"Parent,omitempty"`
-	SubDepartments []Department `gorm:"foreignKey:ParentID" json:"SubDepartments,omitempty"`
-	CreatedAt      time.Time    `json:"CreatedAt"`
-	UpdatedAt      time.Time    `json:"UpdatedAt"`
-	Employees      []Employee   `json:"Employees,omitempty"`
+type Employee struct {
+    ID           int     `json:"id" db:"id"`  // db:"id" указывает на столбец id в базе данных
+    FirstName    string  `json:"first_name" db:"first_name"`
+    LastName     string  `json:"last_name" db:"last_name"`
+    Position     string  `json:"position" db:"position"`
+    Role         string  `json:"role" db:"role"`
+    Phone        string  `json:"phone" db:"phone"`
+    Email        string  `json:"email" db:"email"`
+    ManagerID    *int    `json:"manager_id" db:"manager_id"`
+    DepartmentID *int    `json:"department_id" db:"department_id"`
+    DivisionID   *int    `json:"division_id" db:"division_id"`
+    UnitID       *int    `json:"unit_id" db:"unit_id"`
 }
 
-type Employee struct {
-	ID           uint       `gorm:"primaryKey" json:"ID"`
-	Name         string     `json:"Name"`
-	Email        string     `json:"Email"`
-	Phone        string     `json:"Phone"`
-	Address      string     `json:"Address"`
-	Role         string     `json:"Role"`
-	JobPosition  string     `json:"JobPosition"`
-	SupervisorID *uint      `json:"SupervisorID"`
-	Supervisor   *Employee  `gorm:"foreignKey:SupervisorID" json:"Supervisor,omitempty"`
-	DepartmentID uint       `json:"DepartmentID"`
-	Department   Department `gorm:"foreignKey:DepartmentID" json:"Department"`
-	CreatedAt    time.Time  `json:"CreatedAt"`
-	UpdatedAt    time.Time  `json:"UpdatedAt"`
+type Department struct {
+	ID     int     `json:"id"`
+	Name   string  `json:"name"`
+	HeadID *int    `json:"head_id"`
+}
+
+type Division struct {
+	ID     int     `json:"id"`
+	Name   string  `json:"name"`
+	HeadID *int    `json:"head_id"`
+}
+
+type Unit struct {
+	ID     int     `json:"id"`
+	Name   string  `json:"name"`
+	HeadID *int    `json:"head_id"`
 }
