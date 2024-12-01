@@ -5,38 +5,32 @@ import (
     "WEB-DA/internal/storage"
 )
 
-type Service interface {
-    GetOrganizationTree() ([]models.Department, error)
-    SearchEmployees(position, skill string, departmentID *int) ([]models.Employee, error)
-    GetEmployeeDetails(employeeID int) (*models.Employee, error)
-    UpdateEmployee(employee models.Employee) error
-    AddDepartment(department models.Department) error
+type Service struct {
+	storage *storage.Storage
 }
 
-type serviceImpl struct {
-    storage storage.Storage
+func NewService(storage *storage.Storage) *Service {
+	return &Service{storage: storage}
 }
 
-func NewService(storage storage.Storage) Service {
-    return &serviceImpl{storage: storage}
+// Получить иерархию сотрудников
+func (s *Service) GetEmployeeHierarchy(managerID, departmentID interface{}) ([]models.Employee, error) {
+	// Передаем параметры в хранилище, где они будут обработаны
+	return s.storage.GetEmployeeHierarchy(managerID, departmentID)
 }
 
-func (s *serviceImpl) GetOrganizationTree() ([]models.Department, error) {
-    return s.storage.GetOrganizationTree()
+
+// Получить список всех сотрудников
+func (s *Service) GetAllEmployees() ([]models.Employee, error) {
+	return s.storage.GetAllEmployees()
 }
 
-func (s *serviceImpl) SearchEmployees(position, skill string, departmentID *int) ([]models.Employee, error) {
-    return s.storage.SearchEmployees(position, skill, departmentID)
+// GetAllEmployeesWithFilters возвращает список сотрудников с фильтрами
+func (s *Service) GetAllEmployeesWithFilters(filters map[string]interface{}) ([]models.Employee, error) {
+	return s.storage.GetEmployeesWithFilters(filters)
 }
 
-func (s *serviceImpl) GetEmployeeDetails(employeeID int) (*models.Employee, error) {
-    return s.storage.GetEmployeeDetails(employeeID)
-}
-
-func (s *serviceImpl) UpdateEmployee(employee models.Employee) error {
-    return s.storage.UpdateEmployee(employee)
-}
-
-func (s *serviceImpl) AddDepartment(department models.Department) error {
-    return s.storage.AddDepartment(department)
+// GetFilters возвращает список доступных фильтров
+func (s *Service) GetFilters() ([]models.Filters, error) {
+    return s.storage.GetFilters()
 }
