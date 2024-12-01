@@ -24,6 +24,7 @@ CREATE TABLE employees (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     position VARCHAR(100) NOT NULL,
+    photo_path VARCHAR(255),
     role VARCHAR(50),
     phone VARCHAR(20),
     email VARCHAR(100),

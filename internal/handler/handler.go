@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"WEB-DA/internal/service"
 )
@@ -79,6 +78,7 @@ func (h *Handler) GetAllEmployees(c *gin.Context) {
 	filters := map[string]interface{}{
 		"first_name":   c.Query("first_name"),
 		"last_name":    c.Query("last_name"),
+		"photo_path":	c.Query("photo_path"),
 		"position":     c.Query("position"),
 		"role":         c.Query("role"),
 		"phone":        c.Query("phone"),
@@ -115,3 +115,4 @@ func (h *Handler) GetFilters(c *gin.Context) {
     }
     c.JSON(http.StatusOK, filters)
 }
+
