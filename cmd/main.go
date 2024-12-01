@@ -6,7 +6,7 @@
 // @contact.name API Support
 // @contact.url http://example.com/contact
 // @contact.email support@example.com
-// @host localhost:8080
+// @host 85.192.56.139:8080
 // @BasePath /
 package main
 
@@ -49,6 +49,7 @@ func main() {
 		os.Getenv("POSTGRES_PORT"),
 		os.Getenv("POSTGRES_DB"),
 	)
+	fmt.Println(dsn)
 	db, err := sqlx.Connect("postgres", dsn)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)

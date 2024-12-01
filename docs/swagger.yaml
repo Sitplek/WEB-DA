@@ -41,7 +41,7 @@ definitions:
       name:
         type: string
     type: object
-host: localhost:8080
+host: 85.192.56.139:8080
 info:
   contact:
     email: support@example.com

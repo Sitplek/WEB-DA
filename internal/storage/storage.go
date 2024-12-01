@@ -144,7 +144,7 @@ func (s *Storage) GetEmployeeHierarchy(managerID interface{}, departmentID inter
 func (s *Storage) generateFilterKey(filters map[string]interface{}) string {
 	var filterParts []string
 	for key, value := range filters {
-		filterParts = append(filterParts, key+"="+fmt.Sprintf("%v", value))
+		filterParts = append(filterParts, key+" LIKE $"+fmt.Sprintf("%v", value))
 	}
 	return strings.Join(filterParts, "&")
 }

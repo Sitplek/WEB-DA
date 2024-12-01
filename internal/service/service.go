@@ -39,3 +39,4 @@ func (s *Service) GetFilters() ([]models.Filters, error) {
 func (s *Service) GetSectionName(id int) (string, error) {
     return s.storage.GetSectionName(id)
 }
+
