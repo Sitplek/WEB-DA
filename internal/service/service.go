@@ -34,3 +34,8 @@ func (s *Service) GetAllEmployeesWithFilters(filters map[string]interface{}) ([]
 func (s *Service) GetFilters() ([]models.Filters, error) {
     return s.storage.GetFilters()
 }
+
+// GetSectionName возвращает название отдела по ID
+func (s *Service) GetSectionName(id int) (string, error) {
+    return s.storage.GetSectionName(id)
+}

@@ -170,3 +170,13 @@ func (s *Storage) GetFilters() ([]models.Filters, error) {
     }
     return filters, nil
 }
+
+// GetSectionName возвращает название отдела по ID
+func (s *Storage) GetSectionName(id int) (string, error) {
+    var name string
+    err := s.db.Get(&name, "SELECT name FROM departments WHERE id = $1", id)
+    if err != nil {
+        return "", err
+    }
+    return name, nil
+}

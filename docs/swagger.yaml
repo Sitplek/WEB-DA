@@ -24,6 +24,9 @@ definitions:
         type: integer
       phone:
         type: string
+      photo_path:
+        description: Make the first letter uppercase
+        type: string
       position:
         type: string
       role:
@@ -156,4 +159,33 @@ paths:
       summary: Получение списка доступных фильтров
       tags:
       - Employees
+  /section_name:
+    get:
+      description: Возвращает название отдела организации по его ID
+      parameters:
+      - description: ID отдела
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Получение названия отдела по ID
+      tags:
+      - Sections
 swagger: "2.0"

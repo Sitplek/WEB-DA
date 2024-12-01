@@ -182,6 +182,50 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/section_name": {
+            "get": {
+                "description": "Возвращает название отдела организации по его ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Получение названия отдела по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID отдела",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -219,6 +263,10 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "phone": {
+                    "type": "string"
+                },
+                "photo_path": {
+                    "description": "Make the first letter uppercase",
                     "type": "string"
                 },
                 "position": {

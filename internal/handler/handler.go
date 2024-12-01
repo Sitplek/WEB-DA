@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"WEB-DA/internal/service"
+	"strconv"
 )
 
 type ErrorResponse struct {
@@ -116,3 +117,35 @@ func (h *Handler) GetFilters(c *gin.Context) {
     c.JSON(http.StatusOK, filters)
 }
 
+
+// GetSectionName godoc
+// @Summary Получение названия отдела по ID
+// @Description Возвращает название отдела организации по его ID
+// @Tags Sections
+// @Produce json
+// @Param id query int true "ID отдела"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /section_name [get]
+func (h *Handler) GetSectionName(c *gin.Context) {
+    idParam := c.Query("id")
+    if idParam == "" {
+        c.JSON(http.StatusBadRequest, ErrorResponse{Error: "ID отдела обязателен"})
+        return
+    }
+
+    id, err := strconv.Atoi(idParam)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, ErrorResponse{Error: "ID отдела должен быть числом"})
+        return
+    }
+
+    name, err := h.service.GetSectionName(id)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"name": name})
+}
