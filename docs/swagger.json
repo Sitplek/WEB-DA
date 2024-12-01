@@ -1,0 +1,289 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API для управления сотрудниками и их иерархией.",
+        "title": "Employee Management API",
+        "termsOfService": "http://example.com/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://example.com/contact",
+            "email": "support@example.com"
+        },
+        "version": "1.0"
+    },
+    "host": "85.192.56.139:8080",
+    "basePath": "/",
+    "paths": {
+        "/employees": {
+            "get": {
+                "description": "Возвращает список всех сотрудников с возможностью фильтрации",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Получение всех сотрудников",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Имя",
+                        "name": "first_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фамилия",
+                        "name": "last_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Должность",
+                        "name": "position",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Роль",
+                        "name": "role",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Телефон",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Почта",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID руководителя",
+                        "name": "manager_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID департамента",
+                        "name": "department_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID подразделения",
+                        "name": "division_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID отдела",
+                        "name": "unit_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Employee"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/employees/hierarchy": {
+            "get": {
+                "description": "Возвращает иерархию сотрудников по manager_id или department_id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Получение иерархии сотрудников",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID руководителя",
+                        "name": "manager_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID отдела",
+                        "name": "department_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Employee"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/filters": {
+            "get": {
+                "description": "Возвращает список фильтров для сотрудников",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Получение списка доступных фильтров",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Filters"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/section_name": {
+            "get": {
+                "description": "Возвращает название отдела организации по его ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Получение названия отдела по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID отдела",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handler.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Employee": {
+            "type": "object",
+            "properties": {
+                "department_id": {
+                    "type": "integer"
+                },
+                "division_id": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "db:\"id\" указывает на столбец id в базе данных",
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "manager_id": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "photo_path": {
+                    "description": "Make the first letter uppercase",
+                    "type": "string"
+                },
+                "position": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "unit_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Filters": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
